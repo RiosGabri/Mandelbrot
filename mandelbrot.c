@@ -1,7 +1,40 @@
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include "calculo.h"
+#include <time.h>
+
+void salvar_imagem(int *imagem, long largura, long altura) {
+    FILE *arquivo = fopen("mandelbrot_grp_serial.pgm", "w");
+    if (arquivo == NULL) {
+        fprintf(stderr, "erro ao abrir arquivo da imagem\n");
+        exit(EXIT_FAILURE);
+    }
+    for (long y = 0; y < altura; y++) {
+        for (long x = 0; x < largura; x++) {
+            fprintf(arquivo, "%d ", imagem[y * largura + x]);
+        }
+        fprintf(arquivo, "\n");
+    }
+    fclose(arquivo);
+}
+
+void salvar_tempo(double tempo) {
+    FILE *arquivo = fopen("times.txt", "w");
+    if (arquivo == NULL) {
+        fprintf(stderr, "erro ao abrir arquivo de tempos\n");
+        exit(EXIT_FAILURE);
+    }
+    fprintf(arquivo, "serial: %.9f segundos\n", tempo);
+    fclose(arquivo);
+}
+
+double calcular_tempo(struct timespec inicio, struct timespec fim) {
+    double segundos = (double)(fim.tv_sec - inicio.tv_sec);
+    double nanossegundos = (double)(fim.tv_nsec - inicio.tv_nsec);
+    return segundos + nanossegundos / 1000000000.0;
+}
 
 int main(int argc, char *argv[]){
     long largura; 
@@ -39,12 +72,25 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }    
     }
-    int *imagem = (int *)malloc(largura * altura * sizeof(int));
+    int *imagem = malloc(largura * altura * sizeof(int));
+
     if (imagem == NULL) {
         fprintf(stderr, "Erro ao alocar memoria para a imagem\n");
         exit(EXIT_FAILURE);
     }
+
+    struct timespec inicio;
+    struct timespec fim;
+
+    clock_gettime(CLOCK_MONOTONIC, &inicio);
     ImagemSerial(imagem, largura, altura, max_iteracoes);
+    clock_gettime(CLOCK_MONOTONIC, &fim);
+    
+    double tempo = calcular_tempo(inicio, fim);
+    salvar_imagem(imagem, largura, altura);
+    salvar_tempo(tempo);
+
     free(imagem);
+
     return 0;
 }
