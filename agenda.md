@@ -1,7 +1,7 @@
 # Agenda
 
 ```
-27/08 -> L0ǵica inicial:
+27/08 -> Loǵica inicial:
     - Declaração inicial das variáveis
     - Análise do enunciado
     - Lógica dos argumentos
@@ -18,4 +18,5 @@
         -> Laço: verifica se ponto escapou para o infinito + garante que pare caso o ponto nunca escape
         -> Calcula a nova parte real e armazena na variável temporária + Calcula a nova parte imaginária
         -> incrementa a contagem de iterações executadas.
+        -> Retona a quantidade de iterações calculadas em um valor de intensidade de cor do pixel
 ```

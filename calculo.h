@@ -7,5 +7,6 @@
 #define IMAG_MAX  1.5
 
 int calcular_pixel(long x, long y, long largura, long altura, long max_iteracoes);
+void ImagemSerial(int *imagem, long largura, long altura, long max_iteracoes);
 
 #endif 

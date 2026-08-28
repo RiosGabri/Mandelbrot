@@ -39,5 +39,12 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }    
     }
+    int *imagem = (int *)malloc(largura * altura * sizeof(int));
+    if (imagem == NULL) {
+        fprintf(stderr, "Erro ao alocar memoria para a imagem\n");
+        exit(EXIT_FAILURE);
+    }
+    ImagemSerial(imagem, largura, altura, max_iteracoes);
+    free(imagem);
     return 0;
 }
