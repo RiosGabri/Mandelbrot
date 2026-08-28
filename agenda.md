@@ -14,6 +14,8 @@
     - *endptr != '\0' (Pega caractere que parou de ler -> Se esse caractere não for o fim da string ('\0'), significa que o tem letras ou símbolos inválidos)
     - argv[1] == endptr (vazio ou começa com letra)
     - Mapeamento de pixels + intensidade
-    - calculo.c/.h => Declaração das constantes do plano complexo e Implementação das funções matemáticas (mapeamento complexo, laço de escape e preenchimento da matriz de pixels)
-        -> Laço de escape
+    - calculo.c/.h => Mapeamento da tela para o Plano Complexo e aplicação da fórmula no ponto convertido
+        -> Laço: verifica se ponto escapou para o infinito + garante que pare caso o ponto nunca escape
+        -> Calcula a nova parte real e armazena na variável temporária + Calcula a nova parte imaginária
+        -> incrementa a contagem de iterações executadas.
 ```
