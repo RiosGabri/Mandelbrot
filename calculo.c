@@ -1,4 +1,5 @@
 #include "calculo.h"
+#include <omp.h>
 int calcular_pixel(long x, long y, long largura, long altura, long max_iteracoes) {
     double cr = REAL_MIN + (double)x * (REAL_MAX - REAL_MIN) / (double)(largura - 1);
     double ci = IMAG_MIN + (double)y * (IMAG_MAX - IMAG_MIN) / (double)(altura - 1);
@@ -15,11 +16,20 @@ int calcular_pixel(long x, long y, long largura, long altura, long max_iteracoes
     return (int)((iter * 255) / max_iteracoes);
 }
 
-void ImagemSerial(int *imagem, long largura, long altura, long max_iter) {
+void ImagemSerial(int *imagem, long largura, long altura, long max_iteracoes) {
     for (long y = 0; y < altura; y++) {
         for (long x = 0; x < largura; x++) {
-            imagem[y * largura + x] = calcular_pixel(x, y, largura, altura, max_iter);
+            imagem[y * largura + x] = calcular_pixel(x, y, largura, altura, max_iteracoes);
         }
     }
 }
 
+void ImagemOpenMP(int *imagem, long largura, long altura, long max_iteracoes, long num_threads) {
+    #pragma omp parallel for num_threads(num_threads)
+    for (long y = 0; y < altura; y++) {
+        for (long x = 0; x < largura; x++) {
+            imagem[y * largura + x] =
+                calcular_pixel(x, y, largura, altura, max_iteracoes);
+        }
+    }
+}
