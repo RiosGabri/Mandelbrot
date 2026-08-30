@@ -1,6 +1,8 @@
 #include "calculo.h"
 #include <omp.h>
 #include <pthread.h>
+#include <stdlib.h>
+#include <stdio.h>
 int calcular_pixel(long x, long y, long largura, long altura, long max_iteracoes) {
     double cr = REAL_MIN + (double)x * (REAL_MAX - REAL_MIN) / (double)(largura);
     double ci = IMAG_MIN + (double)y * (IMAG_MAX - IMAG_MIN) / (double)(altura);
@@ -61,6 +63,7 @@ void ImagemPthreads1(int *imagem, long largura, long altura, long max_iteracoes,
     long linhas_por_thread = altura / num_threads;
     long resto = altura % num_threads;
     long inicio = 0;
+    long criadas = 0;
 
     for (long i = 0; i < num_threads; i++) {
         long quantidade_linhas = linhas_por_thread;
@@ -73,7 +76,16 @@ void ImagemPthreads1(int *imagem, long largura, long altura, long max_iteracoes,
         dados[i].max_iteracoes = max_iteracoes;
         dados[i].inicio = inicio;
         dados[i].fim = inicio + quantidade_linhas;
-        pthread_create(&threads[i], NULL, calcular_parte, &dados[i]);
+
+        int erro = pthread_create(&threads[i], NULL, calcular_parte, &dados[i]);
+        if (erro != 0) {
+            fprintf(stderr, "Erro ao criar thread %ld: %s\n", i, strerror(erro));
+            for (long j = 0; j < criadas; j++) {
+                pthread_join(threads[j], NULL);
+            }
+            exit(EXIT_FAILURE);
+        }
+        criadas++;
         inicio = dados[i].fim;
     }
     for (long i = 0; i < num_threads; i++) {
@@ -106,6 +118,8 @@ void *parte_ciclica(void *arg) {
 void ImagemPthreads2(int *imagem, long largura, long altura, long max_iteracoes, long num_threads) {
     pthread_t threads[num_threads];
     DadosThreadCiclica dados[num_threads];
+    long criadas = 0;
+
     for (long i = 0; i < num_threads; i++) {
         dados[i].imagem = imagem;
         dados[i].largura = largura;
@@ -113,7 +127,16 @@ void ImagemPthreads2(int *imagem, long largura, long altura, long max_iteracoes,
         dados[i].max_iteracoes = max_iteracoes;
         dados[i].id_thread = i;
         dados[i].num_threads = num_threads;
-        pthread_create(&threads[i],NULL, calcular_parte, &dados[i]);
+
+        int erro = pthread_create(&threads[i], NULL, parte_ciclica, &dados[i]);
+        if (erro != 0) {
+            fprintf(stderr, "Erro ao criar thread %ld: %s\n", i, strerror(erro));
+            for (long j = 0; j < criadas; j++) {
+                pthread_join(threads[j], NULL);
+            }
+            exit(EXIT_FAILURE);
+        }
+        criadas++;
     }
     for (long i = 0; i < num_threads; i++) {
         pthread_join(threads[i], NULL);
