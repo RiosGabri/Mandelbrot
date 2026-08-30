@@ -11,12 +11,13 @@ OBJS = $(SRCS:.c=.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS)
 
 %.o: %.c calculo.h
-$(CC) $(CFLAGS) -fopenmp -pthread -c $< -o $@
+	$(CC) $(CFLAGS) -fopenmp -pthread -c $< -o $@
 
 clean:
-rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET)
 
 .PHONY: all clean
+
