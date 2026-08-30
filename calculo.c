@@ -2,8 +2,8 @@
 #include <omp.h>
 #include <pthread.h>
 int calcular_pixel(long x, long y, long largura, long altura, long max_iteracoes) {
-    double cr = REAL_MIN + (double)x * (REAL_MAX - REAL_MIN) / (double)(largura - 1);
-    double ci = IMAG_MIN + (double)y * (IMAG_MAX - IMAG_MIN) / (double)(altura - 1);
+    double cr = REAL_MIN + (double)x * (REAL_MAX - REAL_MIN) / (double)(largura);
+    double ci = IMAG_MIN + (double)y * (IMAG_MAX - IMAG_MIN) / (double)(altura);
 
     double zr = 0.0;
     double zi = 0.0;
