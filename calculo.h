@@ -9,5 +9,6 @@
 int calcular_pixel(long x, long y, long largura, long altura, long max_iteracoes);
 void ImagemSerial(int *imagem, long largura, long altura, long max_iteracoes);
 void ImagemOpenMP(int *imagem, long largura, long altura, long max_iteracoes, long num_threads);
+void ImagemPthreads(int *imagem, long largura, long altura,long max_iteracoes, long num_threads);
 
 #endif 
