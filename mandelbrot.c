@@ -22,7 +22,7 @@ void salvar_imagem(int *imagem, long largura, long altura, const char *nome_arqu
     fclose(arquivo);
 }
 
-void salvar_tempos(double tempo_serial, double tempo_openmp, double tempo_pthreads) {
+void salvar_tempos(double tempo_serial, double tempo_openmp, double tempo_pthreads1, double tempo_pthreads2) {
     FILE *arquivo = fopen("times.txt", "w");
     if (arquivo == NULL) {
         fprintf(stderr, "Erro ao abrir arquivo de tempos\n");
@@ -30,7 +30,8 @@ void salvar_tempos(double tempo_serial, double tempo_openmp, double tempo_pthrea
     }
     fprintf(arquivo, "serial: %.9f segundos\n", tempo_serial);
     fprintf(arquivo, "openmp: %.9f segundos\n", tempo_openmp);
-    fprintf(arquivo, "pthreads: %.9f segundos\n", tempo_pthreads);
+    fprintf(arquivo, "pthreads1: %.9f segundos\n", tempo_pthreads1);
+    fprintf(arquivo, "pthreads2: %.9f segundos\n", tempo_pthreads2);
 
     fclose(arquivo);
 }
@@ -101,13 +102,23 @@ int main(int argc, char *argv[]){
     double tempo_openmp = fim_openmp - inicio_openmp;
     salvar_imagem(imagem,largura, altura, "mandelbrot_grp_openmp.pgm");
 
-    double inicio_pthreads = omp_get_wtime();
-    ImagemPthreads(imagem, largura, altura, max_iteracoes, num_threads);
-    double fim_pthreads = omp_get_wtime();
-    double tempo_pthreads = fim_pthreads - inicio_pthreads;
-    salvar_imagem(imagem, largura, altura, "mandelbrot_grp_pthreads1.pgm");
+    struct timespec inicio_pthreads1;
+    struct timespec fim_pthreads1;
+    clock_gettime(CLOCK_MONOTONIC, &inicio_pthreads1);
+    ImagemPthreads1(imagem,largura, altura, max_iteracoes, num_threads);
+    clock_gettime(CLOCK_MONOTONIC, &fim_pthreads1);
+    double tempo_pthreads1 = calcular_tempo(inicio_pthreads1, fim_pthreads1);
+    salvar_imagem(imagem, largura, altura, "mandelbrot_grp_pthreads1.pgm");      
 
-    salvar_tempos(tempo_serial, tempo_openmp, tempo_pthreads);
+    struct timespec inicio_pthreads2;
+    struct timespec fim_pthreads2;
+    clock_gettime(CLOCK_MONOTONIC, &inicio_pthreads2);
+    ImagemPthreads2(imagem, largura, altura, max_iteracoes, num_threads);
+    clock_gettime(CLOCK_MONOTONIC, &fim_pthreads2);
+    double tempo_pthreads2 = calcular_tempo(inicio_pthreads2, fim_pthreads2);
+    salvar_imagem(imagem, largura, altura, "mandelbrot_grp_pthreads2.pgm");
+
+    salvar_tempos(tempo_serial, tempo_openmp, tempo_pthreads1, tempo_pthreads2);
 
     free(imagem);
 
