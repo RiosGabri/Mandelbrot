@@ -15,7 +15,10 @@ void salvar_imagem(int *imagem, long largura, long altura, const char *nome_arqu
     }
     for (long y = 0; y < altura; y++) {
         for (long x = 0; x < largura; x++) {
-            fprintf(arquivo, "%d ", imagem[y * largura + x]);
+            fprintf(arquivo, "%d", imagem[y * largura + x]);
+            if (x < largura - 1) {
+                fprintf(arquivo, " ");
+            }
         }
         fprintf(arquivo, "\n");
     }
@@ -28,10 +31,10 @@ void salvar_tempos(double tempo_serial, double tempo_openmp, double tempo_pthrea
         fprintf(stderr, "Erro ao abrir arquivo de tempos\n");
         exit(EXIT_FAILURE);
     }
-    fprintf(arquivo, "serial: %.9f segundos\n", tempo_serial);
-    fprintf(arquivo, "openmp: %.9f segundos\n", tempo_openmp);
-    fprintf(arquivo, "pthreads1: %.9f segundos\n", tempo_pthreads1);
-    fprintf(arquivo, "pthreads2: %.9f segundos\n", tempo_pthreads2);
+    fprintf(arquivo, "Serial: %.6fs\n", tempo_serial);
+    fprintf(arquivo, "OpenMP: %.6fs\n", tempo_openmp);
+    fprintf(arquivo, "Pthreads1: %.6fs\n", tempo_pthreads1);
+    fprintf(arquivo, "Pthreads2: %.6fs\n", tempo_pthreads2);
 
     fclose(arquivo);
 }
